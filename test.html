@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pie Chart</title>
+    <style>
+        body {
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<canvas id="pieChart" width="400" height="400"></canvas>
+<script>
+    const canvas = document.getElementById("pieChart");
+    const ctx = canvas.getContext("2d");
+
+    const colors = ["#F2994A", "#6FCF97", "#9B51E0", "#2F80ED", "#56CCF2", "#219653", "#F2C94C", "#EB5757"];
+
+    function drawPieChart(data) {
+        const totalValue = data.reduce((total, item) => total + item.value, 0);
+        let startAngle = -Math.PI / 2;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        data.forEach((item, index) => {
+            const sliceAngle = (item.value / totalValue) * 2 * Math.PI;
+            const endAngle = startAngle + sliceAngle;
+
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, canvas.height / 2);
+            ctx.arc(canvas.width / 2, canvas.height / 2, item.radius, startAngle, endAngle);
+            ctx.lineTo(canvas.width / 2, canvas.height / 2);
+            ctx.fillStyle = colors[index % colors.length];
+            ctx.fill();
+
+            startAngle = endAngle;
+        });
+
+        // Рисование центрального круга
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, 30, 0, 2 * Math.PI);
+        ctx.fillStyle = "#000"; // Черный цвет
+        ctx.fill();
+    }
+
+    canvas.addEventListener("click", () => {
+        const data = generateRandomData();
+        drawPieChart(data);
+    });
+
+    function generateRandomData() {
+        const numValues = Math.floor(Math.random() * 8) + 1;
+        const data = [];
+
+        for (let i = 0; i < numValues; i++) {
+            const value = Math.random() * 100;
+            const radius = Math.random() * 100 + 50; // Adjust the radius range as needed
+            data.push({ value, radius });
+        }
+
+        return data;
+    }
+
+    drawPieChart(generateRandomData());
+</script>
+</body>
+</html>
